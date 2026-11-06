@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ねんきん絶望便 〜あなたの生涯払い損チェッカー〜</title>
+<meta name="description" content="【厚生労働省非公認】会社負担分も暴く真実の定期便。あなたの年金生涯収支と「老後1日に使えるお金」を試算します。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ねんきん絶望便 〜あなたの生涯払い損チェッカー〜">
+<meta property="og:description" content="【厚生労働省非公認】会社負担分も暴く真実の定期便。あなたの年金生涯収支と「老後1日に使えるお金」を試算します。">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ねんきん絶望便 〜あなたの生涯払い損チェッカー〜">
+<meta name="twitter:description" content="【厚生労働省非公認】会社負担分も暴く真実の定期便。あなたの年金生涯収支と「老後1日に使えるお金」を試算します。">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--k:#000;--r:#e60012;--y:#ffe600;--g:#00b140;--w:#fff;--bg:#fffbd0;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--k);font-family:'DotGothic16','MS Gothic','Hiragino Kaku Gothic ProN',monospace;background-image:repeating-linear-gradient(45deg,transparent 0 10px,rgba(0,0,0,.05) 10px 20px)}
+.box{border:4px solid var(--k);background:var(--w);box-shadow:6px 6px 0 var(--k)}
+.hd{background:var(--k);color:var(--y);padding:2px 8px;font-weight:bold}
+input[type=range]{width:100%;height:28px;accent-color:var(--r)}
+.blink{animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:0}}
+.marq{display:inline-block;white-space:nowrap;animation:mq 14s linear infinite}@keyframes mq{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.stamp{display:inline-block;border:8px double var(--r);color:var(--r);font-weight:900;padding:4px 18px;transform:rotate(-8deg);background:rgba(255,255,255,.85);letter-spacing:.1em}
+.stamp.ok{border-color:var(--g);color:var(--g)}
+.stamp.go{animation:dn .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes dn{0%{transform:scale(6) rotate(-30deg);opacity:0}60%{transform:scale(.85) rotate(-8deg);opacity:1}75%{transform:scale(1.05) rotate(-8deg) translateX(-6px)}90%{transform:scale(1) rotate(-8deg) translateX(6px)}100%{transform:scale(1) rotate(-8deg)}}
+.sw{position:relative;width:76px;height:36px;border:4px solid var(--k);background:#888;cursor:pointer;flex:none}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;background:var(--w);border:3px solid var(--k);transition:left .12s}
+.sw[aria-checked=true]{background:var(--g)}.sw[aria-checked=true]::after{left:36px}
+.cnt{background:#000;color:#0f0;font-family:'Courier New',monospace;letter-spacing:.2em;padding:4px 10px;border:3px inset #888;font-size:1.6rem}
+.btn{border:4px solid var(--k);box-shadow:4px 4px 0 var(--k);font-weight:bold;padding:10px 14px;cursor:pointer}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--k)}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="max-w-2xl mx-auto px-3 py-4 space-y-5">
+
+<header class="box text-center p-3" style="background:var(--y)">
+  <div class="bg-black text-yellow-300 text-xs overflow-hidden py-1 mb-2"><span class="marq">★☆★ 本日も保険料は容赦なく天引きされています ★☆★ 厚労省とは一切関係ありません ★☆★</span></div>
+  <h1 class="text-4xl sm:text-5xl font-black leading-tight" style="color:var(--r);text-shadow:3px 3px 0 #000">ねんきん絶望便</h1>
+  <p class="font-bold text-base sm:text-lg mt-1">〜あなたの生涯払い損チェッカー〜</p>
+  <p class="mt-2 text-xs sm:text-sm inline-block bg-black text-white px-2 py-1">[ ※厚生労働省非公認 / 会社負担分も暴く真実の定期便 ]</p>
+</header>
+
+<section class="box">
+  <div class="hd">■ STEP1 あなたの条件を入力せよ</div>
+  <div class="p-3 space-y-5">
+    <div>
+      <div class="flex justify-between font-bold"><span>生まれ年</span><span class="text-xl" style="color:var(--r)"><span id="vY">1990</span>年</span></div>
+      <input id="year" type="range" min="1950" max="2005" value="1990">
+    </div>
+    <div>
+      <div class="flex justify-between font-bold"><span>想定平均年収</span><span class="text-xl" style="color:var(--r)"><span id="vI">400</span>万円</span></div>
+      <input id="inc" type="range" min="200" max="1500" step="10" value="400">
+    </div>
+    <details id="assist" class="border-4 border-black" style="background:#ffd">
+      <summary class="cursor-pointer font-black p-2 text-white select-none" style="background:var(--g)">▶ 生涯の平均年収がわからない人はこちら <span class="blink">★</span></summary>
+      <div class="p-3 space-y-4">
+        <p class="text-xs font-bold">↓ 3つ答えるだけで、生涯の平均年収を勝手に逆算します</p>
+        <div>
+          <div class="flex justify-between font-bold text-sm"><span>① 今の年齢</span><span class="text-lg" style="color:var(--r)"><span id="aAv">30</span>歳</span></div>
+          <input id="aAge" type="range" min="20" max="60" value="30">
+        </div>
+        <div>
+          <div class="flex justify-between font-bold text-sm"><span>② 今の年収</span><span class="text-lg" style="color:var(--r)"><span id="aIv">400</span>万円</span></div>
+          <input id="aInc" type="range" min="200" max="1200" step="10" value="400">
+        </div>
+        <div>
+          <div class="font-bold text-sm mb-1">③ 働き方タイプ</div>
+          <div id="types" class="space-y-2">
+            <label class="flex gap-2 items-start border-2 border-black p-2 bg-white cursor-pointer"><input type="radio" name="wt" value="A" checked class="mt-1 w-5 h-5" style="accent-color:var(--r)"><span class="text-sm"><b>[A] 一般企業</b><br><span class="text-xs">年功序列でそこそこ上がる</span></span></label>
+            <label class="flex gap-2 items-start border-2 border-black p-2 bg-white cursor-pointer"><input type="radio" name="wt" value="B" class="mt-1 w-5 h-5" style="accent-color:var(--r)"><span class="text-sm"><b>[B] 大手・公務員</b><br><span class="text-xs">後半グッと伸びるハイカーブ</span></span></label>
+            <label class="flex gap-2 items-start border-2 border-black p-2 bg-white cursor-pointer"><input type="radio" name="wt" value="C" class="mt-1 w-5 h-5" style="accent-color:var(--r)"><span class="text-sm"><b>[C] 昇給なし・現状維持</b><br><span class="text-xs">今の年収がそのまま続く</span></span></label>
+          </div>
+        </div>
+        <button id="apply" class="btn w-full text-white" style="background:var(--g)">✓ この条件で平均年収を自動適用する</button>
+        <div id="amsg" class="hidden border-4 border-black p-2 text-center font-black" style="background:var(--y)"></div>
+      </div>
+    </details>
+    <div>
+      <div class="flex justify-between font-bold"><span>想定寿命</span><span class="text-xl" style="color:var(--r)"><span id="vL">85</span>歳</span></div>
+      <input id="life" type="range" min="65" max="100" value="85">
+    </div>
+    <div class="border-2 border-black p-2" style="background:var(--bg)">
+      <div class="flex items-center justify-between gap-3">
+        <div class="font-bold text-sm">会社負担分（労使折半9.15%）も含める</div>
+        <button id="sw" class="sw" role="switch" aria-checked="true" aria-label="会社負担分を含める"></button>
+      </div>
+      <p id="denial" class="hidden mt-2 text-xs font-bold p-2 text-white" style="background:var(--r)">※現実逃避モード：会社負担を隠すと赤字が半分に見えますが、その分基本給が削られています</p>
+    </div>
+    <button id="go" class="btn w-full text-xl text-white" style="background:var(--r)">▶ 絶望を計算する ◀</button>
+  </div>
+</section>
+
+<section id="res" class="hidden space-y-5">
+  <div id="shotCard" class="box">
+    <div class="hd">■ STEP2 診断結果（生涯収支）</div>
+    <div class="p-2 text-center relative">
+      <div id="sum" class="text-[11px] font-bold bg-yellow-200 border-2 border-black px-1 py-0.5 mb-1"></div>
+      <div class="text-xs font-bold">あなたの年金・生涯収支</div>
+      <div id="net" class="font-black leading-none my-1" style="font-size:clamp(2.4rem,12vw,4.5rem);color:var(--r);text-shadow:3px 3px 0 #000">▲0万円</div>
+      <div class="my-1 min-h-[3.5rem] flex items-center justify-center"><span id="stamp" class="stamp text-3xl sm:text-4xl">大赤字</span></div>
+      <div id="badge" class="inline-block px-2 py-1 text-base font-black border-4 border-black" style="background:var(--y)">【】</div>
+      <p class="mt-2 text-sm font-bold">元を取るために必要な寿命：<span id="be" class="text-2xl" style="color:var(--r)">--</span></p>
+      <p id="bn" class="text-xs"></p>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="hd">■ 老後の1日あたり実質使える額</div>
+    <div class="p-3 text-center">
+      <div class="text-sm font-bold">65歳以降 年間受給額 ÷ 365日</div>
+      <div class="text-4xl font-black my-1" style="color:var(--g)">1日 <span id="day">0</span>円</div>
+      <p class="font-bold">牛丼並盛わずか <span id="dayb" class="text-2xl" style="color:var(--r)">0</span> 杯分…<br><span class="text-xs">（年間受給額 約<span id="ann">0</span>万円／家賃も医療費も込み）</span></p>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="hd">■ 赤字額のリアル換算</div>
+    <ul class="p-3 space-y-2 font-bold">
+      <li class="flex justify-between gap-2 border-b-2 border-dashed border-black pb-1"><span>🍚 吉野家 牛丼並盛</span><span><span id="c1" class="text-xl" style="color:var(--r)">0</span> 万杯分</span></li>
+      <li class="flex justify-between gap-2 border-b-2 border-dashed border-black pb-1"><span>🚗 プリウス(約300万円)</span><span><span id="c2" class="text-xl" style="color:var(--r)">0</span> 台分</span></li>
+      <li class="flex justify-between gap-2"><span>⛏ 国へのタダ働き</span><span><span id="c3" class="text-xl" style="color:var(--r)">0</span> 年分</span></li>
+    </ul>
+    <p id="c0" class="hidden px-3 pb-3 text-xs font-bold">※黒字なので換算不能。おめでとうございます、逃げ切りです。</p>
+  </div>
+
+  <div class="box">
+    <div class="hd">■ STEP3 世代間格差グラフ</div>
+    <div class="p-3">
+      <div id="chart" class="space-y-3"></div>
+      <p class="text-[11px] mt-3">※1940年代生まれは+約3,200万円（固定値）。1960・1980年代生まれと自分は同じ年収・寿命・会社負担設定で本ツールが試算。</p>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="hd">■ STEP4 この絶望を拡散せよ</div>
+    <div class="p-3 space-y-3">
+      <a id="shX" target="_blank" rel="noopener" class="btn text-center text-white block text-lg" style="background:#000">𝕏（旧Twitter）で絶望をシェア</a>
+      <a id="shL" target="_blank" rel="noopener" class="btn text-center text-white block" style="background:var(--g)">💬 LINEで友達に絶望を共有</a>
+      <div class="grid grid-cols-2 gap-3">
+        <button id="cp" class="btn text-sm" style="background:var(--y)">📋 結果テキストをコピー</button>
+        <button id="sv" class="btn text-sm text-white" style="background:var(--r)">💾 結果画像を保存</button>
+      </div>
+      <p id="shm" class="text-xs text-center font-bold min-h-[1rem]"></p>
+      <div id="imgm" class="hidden border-4 border-black p-2 text-center" style="background:var(--y)">
+        <p class="text-xs font-bold mb-1">▼ 画像を長押し（PCは右クリック）して保存してね</p>
+        <img id="imgv" alt="結果画像" class="mx-auto border-2 border-black max-w-full">
+      </div>
+      <div class="text-center pt-2">
+        <div class="text-[10px] text-gray-600">スポンサーリンク</div>
+        <div class="mx-auto flex items-center justify-center text-gray-500 text-sm border border-gray-400 bg-gray-100" style="width:300px;max-width:100%;aspect-ratio:300/250">300×250<br>広告ダミー枠</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="text-[11px] leading-relaxed">※娯楽目的の超ざっくり試算です。保険料率18.3%（22〜65歳就業）、65歳から受給、世代別の保険料率・給付水準の差とマクロ経済スライドを単純化し、実質割引率1%で現在価値換算。国庫負担・税負担・遺族/障害給付は考慮していません。実際の受給額は日本年金機構「ねんきん定期便」で確認してください。</p>
+
+<footer class="box text-center p-3" style="background:var(--k);color:#fff">
+  <div class="text-sm mb-2">あなたは</div>
+  <div class="cnt inline-block" id="cnt">0001234</div>
+  <span class="font-bold ml-1">人目の養分です</span>
+  <div class="mt-3 text-xs text-yellow-300 blink">★ キリ番踏んだらスクショして報告してね ★</div>
+  <div class="mt-1 text-[10px] text-gray-400">Best viewed with Netscape Navigator 4.0 / 800×600</div>
+  <p class="mt-3 text-[11px] text-left border-t border-gray-600 pt-2">【免責事項】※本試算は老齢年金に特化した概算です。今後の法改正等に合わせてリアルタイムで更新予定</p>
+</footer>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+let incl=true, shown=false, lastTier='', shareTxt='';
+const BOWL=498, PRIUS=300;
+const fmt=n=>Math.round(n).toLocaleString('ja-JP');
+
+function model(y,inc,life,withEr){
+  const ci=Math.min(inc,1000);
+  const r=Math.min(1,0.55+0.45*(y-1950)/40);
+  const m=1-0.30*(y-1950)/55;
+  const rate=withEr?0.183:0.0915;
+  const yrs=43, fv=1.24, dv=0.9;
+  const contrib=ci*rate*r*yrs*fv;
+  const annual=(ci*0.2357+81.6)*m;
+  const ben=annual*Math.max(0,life-65)*dv;
+  const net=ben-contrib;
+  const be=65+(contrib/fv*1.0)/(annual*dv)*1;
+  return {net,annual,be,contrib};
+}
+function tier(net){
+  if(net>=0)return ['【逃げ切り成功・勝ち組】','ok','セーフ'];
+  if(net>-1000)return ['【ほぼ養分・じわじわ搾取】','','要注意'];
+  if(net>-2000)return ['【立派な養分・納税マシーン】','','大赤字'];
+  return ['【養分確定・国家のATM】','','養分確定'];
+}
+function calc(animate){
+  const y=+$('year').value, inc=+$('inc').value, life=+$('life').value;
+  $('vY').textContent=y;$('vI').textContent=inc;$('vL').textContent=life;
+  $('sum').textContent=y+'年生まれ／年収'+inc+'万円／'+life+'歳まで／会社負担'+(incl?'込み':'抜き');
+  const R=model(y,inc,life,incl);
+  const net=R.net, deficit=Math.max(0,-net);
+  $('net').textContent=(net<0?'▲':'+')+fmt(Math.abs(net))+'万円';
+  $('net').style.color=net<0?'var(--r)':'var(--g)';
+  const t=tier(net);
+  $('badge').textContent=t[0];
+  const st=$('stamp');st.textContent=t[2];st.className='stamp text-3xl sm:text-4xl'+(t[1]?' ok':'');
+  if(animate||t[2]!==lastTier){void st.offsetWidth;st.classList.add('go');}
+  lastTier=t[2];
+  const beAge=R.be;
+  if(beAge>100){$('be').textContent='100歳超（絶望）';}
+  else $('be').textContent=beAge.toFixed(1)+'歳';
+  $('bn').textContent=beAge>life?`想定寿命${life}歳では元が取れません（あと${(beAge-life).toFixed(1)}年長生きが必要）`:'想定寿命までに元が取れます。';
+  const perDay=R.annual*10000/365;
+  $('day').textContent=fmt(perDay);
+  $('dayb').textContent=(perDay/BOWL).toFixed(1);
+  $('ann').textContent=fmt(R.annual);
+  $('c1').textContent=(deficit/BOWL).toFixed(1);
+  $('c2').textContent=(deficit/PRIUS).toFixed(1);
+  $('c3').textContent=(deficit/Math.max(inc,1)).toFixed(1);
+  $('c0').classList.toggle('hidden',deficit>0);
+  // chart
+  const rows=[
+    ['1940年代生',3200,'fix'],
+    ['1960年代生',model(1965,inc,life,incl).net],
+    ['1980年代生',model(1985,inc,life,incl).net],
+    ['あなた('+y+'年)',net,'me']
+  ];
+  const mx=Math.max(...rows.map(r=>Math.abs(r[1])),1);
+  $('chart').innerHTML=rows.map(r=>{
+    const v=r[1],w=Math.min(100,Math.abs(v)/mx*100),pos=v>=0;
+    const col=pos?'var(--g)':'var(--r)';
+    return `<div><div class="flex justify-between text-sm font-bold"><span>${r[0]}${r[2]==='me'?' ◀':''}</span><span style="color:${col}">${pos?'+':'▲'}${fmt(Math.abs(v))}万円</span></div>
+    <div class="flex h-7 border-2 border-black bg-white"><div class="w-1/2 flex justify-end border-r-2 border-black">${pos?'':`<div style="width:${w}%;background:var(--r)"></div>`}</div><div class="w-1/2">${pos?`<div style="width:${w}%;height:100%;background:var(--g)"></div>`:''}</div></div></div>`;
+  }).join('');
+  // share
+  const beTxt=beAge>100?'100歳超':Math.ceil(beAge)+'歳';
+  const txt=`${net<0?'【悲報】':'【朗報】'}${y}年生まれ・年収${inc}万の生涯年金収支、会社負担${incl?'込み':'抜き'}で【${net<0?'▲':'+'}${fmt(Math.abs(net))}万円】でした。\n格付け：${t[0]}\n元を取るには${beTxt}まで生きなきゃ無理ゲーです。\n老後の1日受給額：約${fmt(perDay)}円（牛丼${(perDay/BOWL).toFixed(1)}杯分）\n#ねんきん絶望便 ${window.location.href.split('?')[0]}`;
+  $('shX').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(txt);
+  $('shL').href='https://line.me/R/share?text='+encodeURIComponent(txt);
+  shareTxt=txt;
+}
+['year','inc','life'].forEach(id=>$(id).addEventListener('input',()=>{$('vY').textContent=$('year').value;$('vI').textContent=$('inc').value;$('vL').textContent=$('life').value;if(shown)calc(false);}));
+$('sw').addEventListener('click',()=>{incl=!incl;$('sw').setAttribute('aria-checked',incl);$('denial').classList.toggle('hidden',incl);if(shown)calc(false);});
+$('go').addEventListener('click',()=>{shown=true;$('res').classList.remove('hidden');calc(true);$('res').scrollIntoView({behavior:'smooth',block:'start'});});
+
+// share tools
+function note(s){$('shm').textContent=s;}
+$('cp').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(shareTxt);note('コピーしました！');return;}catch(e){}
+  try{const ta=document.createElement('textarea');ta.value=shareTxt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');document.body.removeChild(ta);note(ok?'コピーしました！':'コピーできませんでした');}catch(e){note('コピーできませんでした');}
+});
+$('sv').addEventListener('click',async()=>{
+  if(typeof html2canvas==='undefined'){note('画像生成ライブラリを読み込めませんでした');return;}
+  note('画像を生成中…');
+  try{
+    const canvas=await html2canvas($('shotCard'),{scale:2,backgroundColor:'#fffbd0',onclone:d=>{const s=d.getElementById('stamp');if(s){s.style.animation='none';s.style.opacity='1';}}});
+    const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
+    let saved=false;
+    try{
+      const dl=window.claude&&await window.claude.use('downloads');
+      if(dl&&blob){await dl.save({filename:'nenkin-zetsubou.png',data:blob});saved=true;note('保存しました！');}
+    }catch(e){if(e&&e.code==='declined'){note('キャンセルしました');return;}}
+    if(!saved){$('imgv').src=canvas.toDataURL('image/png');$('imgm').classList.remove('hidden');note('画像を下に表示しました');}
+  }catch(e){note('画像の生成に失敗しました');}
+});
+
+// income assist
+const CURVES={A:[[22,.55],[30,.7],[40,.88],[50,1],[55,1.03],[60,.9],[65,.75]],B:[[22,.45],[30,.6],[40,.8],[50,1],[58,1.25],[65,1.3]]};
+function at(c,x){for(let i=1;i<c.length;i++){if(x<=c[i][0]){const a=c[i-1],b=c[i];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}}return c[c.length-1][1];}
+function lifeAvg(type,age,cur){
+  if(type==='C')return cur;
+  const c=CURVES[type];let s=0,n=0;
+  for(let x=22;x<65;x++){s+=at(c,x);n++;}
+  return cur*(s/n)/at(c,Math.max(age,22));
+}
+$('aAge').addEventListener('input',()=>{$('aAv').textContent=$('aAge').value;});
+$('aInc').addEventListener('input',()=>{$('aIv').textContent=$('aInc').value;});
+$('apply').addEventListener('click',()=>{
+  const type=document.querySelector('input[name=wt]:checked').value;
+  let v=lifeAvg(type,+$('aAge').value,+$('aInc').value);
+  v=Math.min(1500,Math.max(200,Math.round(v/10)*10));
+  $('inc').value=v;
+  $('inc').dispatchEvent(new Event('input'));
+  const m=$('amsg');m.classList.remove('hidden');
+  m.innerHTML='★ あなたの生涯平均年収は<span class="text-2xl" style="color:var(--r)">【約'+v+'万円】</span>と推定されました ★<br><span class="text-[11px] font-normal">↑ 「想定平均年収」スライダーにセットしました</span>';
+});
+
+// kiriban counter（ローカルストレージ＋初期下駄履かせ方式）
+(function() {
+  let base = 2840; // スタートの基準人数（ここをお好みの数字に）
+  let count = base;
+  try {
+    let saved = parseInt(localStorage.getItem('nenkin_real_cnt'));
+    if (!isNaN(saved)) {
+      count = saved + 1;
+    } else {
+      count = base + Math.floor(Math.random() * 8) + 1;
+    }
+    localStorage.setItem('nenkin_real_cnt', count);
+  } catch(e) {
+    count = base + 1;
+  }
+  $('cnt').textContent = String(count).padStart(7, '0');
+})();
+
+})();
+</script>
+</body>
+</html>
