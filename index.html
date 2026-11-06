@@ -288,22 +288,25 @@ $('apply').addEventListener('click',()=>{
   m.innerHTML='★ あなたの生涯平均年収は<span class="text-2xl" style="color:var(--r)">【約'+v+'万円】</span>と推定されました ★<br><span class="text-[11px] font-normal">↑ 「想定平均年収」スライダーにセットしました</span>';
 });
 
-// kiriban counter（ローカルストレージ＋初期下駄履かせ方式）
-(function() {
-  let base = 0; // スタートの基準人数（ここをお好みの数字に）
-  let count = base;
+// 全員共通のリアルタイムカウンター（外部共有API）
+(async function() {
+  const cntEl = $('cnt');
   try {
-    let saved = parseInt(localStorage.getItem('nenkin_real_cnt'));
-    if (!isNaN(saved)) {
-      count = saved + 1;
-    } else {
-      count = base + Math.floor(Math.random() * 8) + 1;
+    // 全員で共有される一意のカウンター名（任意の文字列）
+    const res = await fetch('https://api.counterapi.dev/v1/nenkin-zetsubou-2026-prod/visits/up');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && typeof data.count === 'number') {
+        cntEl.textContent = String(data.count).padStart(7, '0');
+        return;
+      }
     }
-    localStorage.setItem('nenkin_real_cnt', count);
-  } catch(e) {
-    count = base + 1;
+  } catch (e) {
+    console.warn('API connection failed', e);
   }
-  $('cnt').textContent = String(count).padStart(7, '0');
+
+  // 通信エラー時のみのバックアップ表示
+  cntEl.textContent = '0000001';
 })();
 
 })();
