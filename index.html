@@ -151,8 +151,12 @@ input[type=range]{width:100%;height:28px;accent-color:var(--r)}
         <img id="imgv" alt="結果画像" class="mx-auto border-2 border-black max-w-full">
       </div>
       <div class="text-center pt-2">
-        <div class="text-[10px] text-gray-600">スポンサーリンク</div>
-        <div class="mx-auto flex items-center justify-center text-gray-500 text-sm border border-gray-400 bg-gray-100" style="width:300px;max-width:100%;aspect-ratio:300/250">300×250<br>広告ダミー枠</div>
+        <div class="text-[10px] text-gray-600 mb-1">スポンサーリンク</div>
+        <div class="inline-block" style="min-width:300px;min-height:250px">
+          <!-- admax -->
+          <script src="https://adm.shinobi.jp/s/76e5314d9517c5b7cc17929be818b3bd"></script>
+          <!-- admax -->
+        </div>
       </div>
     </div>
   </div>
@@ -292,7 +296,6 @@ $('apply').addEventListener('click',()=>{
 (async function() {
   const cntEl = $('cnt');
   try {
-    // 全員で共有される一意のカウンター名（任意の文字列）
     const res = await fetch('https://api.counterapi.dev/v1/nenkin-zetsubou-2026-prod/visits/up');
     if (res.ok) {
       const data = await res.json();
@@ -304,10 +307,13 @@ $('apply').addEventListener('click',()=>{
   } catch (e) {
     console.warn('API connection failed', e);
   }
-
-  // 通信エラー時のみのバックアップ表示
   cntEl.textContent = '0000001';
 })();
+
+})();
+</script>
+</body>
+</html>
 
 })();
 </script>
