@@ -292,30 +292,12 @@ $('apply').addEventListener('click',()=>{
   m.innerHTML='★ あなたの生涯平均年収は<span class="text-2xl" style="color:var(--r)">【約'+v+'万円】</span>と推定されました ★<br><span class="text-[11px] font-normal">↑ 「想定平均年収」スライダーにセットしました</span>';
 });
 
-// 全員共通のリアルタイムカウンター（ゼロリセット版）
-(async function() {
-  const cntEl = $('cnt');
-  // キー名を変更して新規カウントを1から開始
-  const namespace = 'nenkin-zetsubou-official';
-  const key = 'visits_v1';
-  
-  try {
-    const res = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && typeof data.count === 'number') {
-        cntEl.textContent = String(data.count).padStart(7, '0');
-        return;
-      }
-    }
-  } catch (e) {
-    console.warn('API error', e);
-  }
-
-  // API疎通前の初期表示
-  cntEl.textContent = '0000001';
-})();
-
+<!-- レトロなフォント・確実に数字が増える画像カウンター -->
+<img 
+  src="https://count.getloli.com/get/@nenkin-zetsubou-live?theme=green&length=7" 
+  alt="キリ番カウンター" 
+  class="inline-block border border-green-500 bg-black align-middle h-6"
+/>
 })();
 </script>
 
