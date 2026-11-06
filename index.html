@@ -290,7 +290,7 @@ $('apply').addEventListener('click',()=>{
 
 // kiriban counter（ローカルストレージ＋初期下駄履かせ方式）
 (function() {
-  let base = 2840; // スタートの基準人数（ここをお好みの数字に）
+  let base = 0; // スタートの基準人数（ここをお好みの数字に）
   let count = base;
   try {
     let saved = parseInt(localStorage.getItem('nenkin_real_cnt'));
