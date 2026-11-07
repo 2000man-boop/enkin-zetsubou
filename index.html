@@ -193,7 +193,7 @@ function model(y,inc,life,withEr){
   const annual=(ci*0.2357+81.6)*m;
   const ben=annual*Math.max(0,life-65)*dv;
   const net=ben-contrib;
-  const be=65+(contrib/fv*1.0)/(annual*dv)*1;
+  const be = 65 + contrib / (annual * dv);
   return {net,annual,be,contrib};
 }
 function tier(net){
@@ -218,7 +218,7 @@ function calc(animate){
   const beAge=R.be;
   if(beAge>100){$('be').textContent='100歳超（絶望）';}
   else $('be').textContent=beAge.toFixed(1)+'歳';
-  $('bn').textContent=beAge>life?`想定寿命${life}歳では元が取れません（あと${(beAge-life).toFixed(1)}年長生きが必要）`:'想定寿命までに元が取れます。';
+  $('bn').textContent=net>=0?'想定寿命までに元が取れます。':`想定寿命${life}歳では元が取れません（あと${(beAge-life).toFixed(1)}年長生きが必要）`;
   const perDay=R.annual*10000/365;
   $('day').textContent=fmt(perDay);
   $('dayb').textContent=(perDay/BOWL).toFixed(1);
