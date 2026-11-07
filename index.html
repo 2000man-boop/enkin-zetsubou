@@ -111,12 +111,27 @@ input[type=range]{width:100%;height:28px;accent-color:var(--r)}
 
   <div class="box">
     <div class="hd">■ 老後の1日あたり実質使える額</div>
-    <div class="p-3 text-center">
-      <div class="text-sm font-bold">65歳以降 年間受給額 ÷ 365日</div>
-      <div class="text-4xl font-black my-1" style="color:var(--g)">1日 <span id="day">0</span>円</div>
-      <p class="font-bold">牛丼並盛わずか <span id="dayb" class="text-2xl" style="color:var(--r)">0</span> 杯分…<br><span class="text-xs">（年間受給額 約<span id="ann">0</span>万円／家賃も医療費も込み）</span></p>
+    <div class="p-3 text-center space-y-2">
+      <div>
+        <div class="text-xs font-bold text-gray-700">65歳以降の年金受給額（額面）</div>
+        <div class="text-2xl font-black text-black">1日 <span id="annDay">0</span>円 <span class="text-xs font-normal">（月約<span id="annMon">0</span>万円）</span></div>
+      </div>
+      <div class="py-1 px-2 border-2 border-dashed border-black bg-yellow-100 text-left text-xs font-bold leading-tight">
+        ▼ ここから最低限の固定費（日額 約3,300円）が天引きされます<br>
+        <span class="text-[10px] text-gray-600 font-normal">※賃貸家賃4.5万、水道光熱費、医療・介護費、税・社保で月約10万円</span>
+      </div>
+      <div>
+        <div class="text-xs font-bold">手元に残る実質な食費・自由枠</div>
+        <div class="text-4xl font-black my-1" id="foodBox" style="color:var(--g)">
+          1日 <span id="realDay">0</span>円
+        </div>
+        <p class="font-bold text-base">
+          牛丼並盛わずか <span id="dayb" class="text-2xl" style="color:var(--r)">0</span> 杯分…
+        </p>
+        <p id="foodMsg" class="text-xs font-bold mt-1 text-red-600"></p>
+      </div>
     </div>
-  </div>
+
 
   <div class="box">
     <div class="hd">■ 赤字額のリアル換算</div>
@@ -219,10 +234,29 @@ function calc(animate){
   if(beAge>100){$('be').textContent='100歳超（絶望）';}
   else $('be').textContent=beAge.toFixed(1)+'歳';
   $('bn').textContent=net>=0?'想定寿命までに元が取れます。':`想定寿命${life}歳では元が取れません（あと${(beAge-life).toFixed(1)}年長生きが必要）`;
-  const perDay=R.annual*10000/365;
-  $('day').textContent=fmt(perDay);
-  $('dayb').textContent=(perDay/BOWL).toFixed(1);
-  $('ann').textContent=fmt(R.annual);
+
+  const perDay = R.annual * 10000 / 365;
+  const perMonth = R.annual / 12;
+  $('annDay').textContent = fmt(perDay);
+  $('annMon').textContent = perMonth.toFixed(1);
+
+  const FIXED_DAILY = 3300;
+  const realDaily = perDay - FIXED_DAILY;
+  const realBowls = (realDaily / BOWL).toFixed(1);
+
+  $('realDay').textContent = (realDaily < 0 ? '▲' : '') + fmt(Math.abs(realDaily));
+  $('foodBox').style.color = realDaily < 0 ? 'var(--r)' : 'var(--g)';
+  $('dayb').textContent = realBowls;
+
+  const fMsg = $('foodMsg');
+  if (realDaily < 0) {
+    fMsg.textContent = '※固定費だけで年金が吹き飛びます。生きるだけで毎日赤字です。';
+  } else if (realDaily < BOWL) {
+    fMsg.textContent = '※1日牛丼1杯すら食えません。貯金がないと餓死確定です。';
+  } else {
+    fMsg.textContent = '※1日3食食べるにはカツカツ。娯楽・交際費はゼロです。';
+  }
+  
   $('c1').textContent=(deficit/BOWL).toFixed(1);
   $('c2').textContent=(deficit/PRIUS).toFixed(1);
   $('c3').textContent=(deficit/Math.max(inc,1)).toFixed(1);
@@ -243,7 +277,8 @@ function calc(animate){
   }).join('');
   // share
   const beTxt=beAge>100?'100歳超':Math.ceil(beAge)+'歳';
-  const txt=`${net<0?'【悲報】':'【朗報】'}${y}年生まれ・年収${inc}万（${life}歳まで生存）、会社負担${incl?'込み':'抜き'}の生涯収支は【${net<0?'▲':'+'}${fmt(Math.abs(net))}万円】でした。\n格付け：${t[0]}\n元を取るには${beTxt}まで生きなきゃ無理ゲーです。\n老後の1日受給額：約${fmt(perDay)}円（牛丼${(perDay/BOWL).toFixed(1)}杯分）\n#ねんきん絶望便 ${window.location.href.split('?')[0]}`;
+  const txt=`${net<0?'【悲報】':'【朗報】'}${y}年生まれ・年収${inc}万（${life}歳まで生存）、会社負担${incl?'込み':'抜き'}の生涯収支は【${net<0?'▲':'+'}${fmt(Math.abs(net))}万円】でした。\n格付け：${t[0]}\n元を取るには${beTxt}まで生きなきゃ無理ゲーです。\n老後1日の実質自由枠：約${fmt(realDaily)}円（固定費引き後・牛丼${realBowls}杯分）
+\n#ねんきん絶望便 ${window.location.href.split('?')[0]}`;
   $('shX').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(txt);
   $('shL').href='https://line.me/R/share?text='+encodeURIComponent(txt);
   shareTxt=txt;
