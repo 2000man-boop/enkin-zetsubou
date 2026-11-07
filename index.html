@@ -54,7 +54,7 @@ input[type=range]{width:100%;height:28px;accent-color:var(--r)}
     </div>
     <div>
       <div class="flex justify-between font-bold"><span>想定平均年収</span><span class="text-xl" style="color:var(--r)"><span id="vI">400</span>万円</span></div>
-      <input id="inc" type="range" min="200" max="1500" step="10" value="400">
+      <input id="inc" type="range" min="200" max="3000" step="10" value="400">
     </div>
     <details id="assist" class="border-4 border-black" style="background:#ffd">
       <summary class="cursor-pointer font-black p-2 text-white select-none" style="background:var(--g)">▶ 生涯の平均年収がわからない人はこちら <span class="blink">★</span></summary>
@@ -66,7 +66,7 @@ input[type=range]{width:100%;height:28px;accent-color:var(--r)}
         </div>
         <div>
           <div class="flex justify-between font-bold text-sm"><span>② 今の年収</span><span class="text-lg" style="color:var(--r)"><span id="aIv">400</span>万円</span></div>
-          <input id="aInc" type="range" min="200" max="1200" step="10" value="400">
+          <input id="aInc" type="range" min="200" max="3000" step="10" value="400">
         </div>
         <div>
           <div class="font-bold text-sm mb-1">③ 働き方タイプ</div>
@@ -131,7 +131,7 @@ input[type=range]{width:100%;height:28px;accent-color:var(--r)}
         <p id="foodMsg" class="text-xs font-bold mt-1 text-red-600"></p>
       </div>
     </div>
-
+  </div>
 
   <div class="box">
     <div class="hd">■ 赤字額のリアル換算</div>
@@ -253,8 +253,12 @@ function calc(animate){
     fMsg.textContent = '※固定費だけで年金が吹き飛びます。生きるだけで毎日赤字です。';
   } else if (realDaily < BOWL) {
     fMsg.textContent = '※1日牛丼1杯すら食えません。貯金がないと餓死確定です。';
+  } else if (realDaily < BOWL * 3) {
+    fMsg.textContent = '※自炊でなんとか食いつなげるレベル。娯楽・交際費はゼロです。';
+  } else if (realDaily < BOWL * 5) {
+    fMsg.textContent = '※たまの外食は可能ですが、高額な医療費や突発の出費で消し飛びます。';
   } else {
-    fMsg.textContent = '※1日3食食べるにはカツカツ。娯楽・交際費はゼロです。';
+    fMsg.textContent = '※食うには困りませんが、現役時代に納めた巨額の保険料を考えると雀の涙です。';
   }
   
   $('c1').textContent=(deficit/BOWL).toFixed(1);
@@ -277,8 +281,7 @@ function calc(animate){
   }).join('');
   // share
   const beTxt=beAge>100?'100歳超':Math.ceil(beAge)+'歳';
-  const txt=`${net<0?'【悲報】':'【朗報】'}${y}年生まれ・年収${inc}万（${life}歳まで生存）、会社負担${incl?'込み':'抜き'}の生涯収支は【${net<0?'▲':'+'}${fmt(Math.abs(net))}万円】でした。\n格付け：${t[0]}\n元を取るには${beTxt}まで生きなきゃ無理ゲーです。\n老後1日の実質自由枠：約${fmt(realDaily)}円（固定費引き後・牛丼${realBowls}杯分）
-\n#ねんきん絶望便 ${window.location.href.split('?')[0]}`;
+  const txt=`${net<0?'【悲報】':'【朗報】'}${y}年生まれ・年収${inc}万（${life}歳まで生存）、会社負担${incl?'込み':'抜き'}の生涯収支は【${net<0?'▲':'+'}${fmt(Math.abs(net))}万円】でした。\n格付け：${t[0]}\n元を取るには${beTxt}まで生きなきゃ無理ゲーです。\n老後1日の実質自由枠：約${fmt(realDaily)}円（固定費引き後・牛丼${realBowls}杯分）\n#ねんきん絶望便 ${window.location.href.split('?')[0]}`;
   $('shX').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(txt);
   $('shL').href='https://line.me/R/share?text='+encodeURIComponent(txt);
   shareTxt=txt;
@@ -322,7 +325,7 @@ $('aInc').addEventListener('input',()=>{$('aIv').textContent=$('aInc').value;});
 $('apply').addEventListener('click',()=>{
   const type=document.querySelector('input[name=wt]:checked').value;
   let v=lifeAvg(type,+$('aAge').value,+$('aInc').value);
-  v=Math.min(1500,Math.max(200,Math.round(v/10)*10));
+  v=Math.min(3000,Math.max(200,Math.round(v/10)*10));
   $('inc').value=v;
   $('inc').dispatchEvent(new Event('input'));
   const m=$('amsg');m.classList.remove('hidden');
