@@ -243,7 +243,7 @@ function calc(animate){
   }).join('');
   // share
   const beTxt=beAge>100?'100歳超':Math.ceil(beAge)+'歳';
-  const txt=`${net<0?'【悲報】':'【朗報】'}${y}年生まれ・年収${inc}万の生涯年金収支、会社負担${incl?'込み':'抜き'}で【${net<0?'▲':'+'}${fmt(Math.abs(net))}万円】でした。\n格付け：${t[0]}\n元を取るには${beTxt}まで生きなきゃ無理ゲーです。\n老後の1日受給額：約${fmt(perDay)}円（牛丼${(perDay/BOWL).toFixed(1)}杯分）\n#ねんきん絶望便 ${window.location.href.split('?')[0]}`;
+  const txt=`${net<0?'【悲報】':'【朗報】'}${y}年生まれ・年収${inc}万（${life}歳まで生存）、会社負担${incl?'込み':'抜き'}の生涯収支は【${net<0?'▲':'+'}${fmt(Math.abs(net))}万円】でした。\n格付け：${t[0]}\n元を取るには${beTxt}まで生きなきゃ無理ゲーです。\n老後の1日受給額：約${fmt(perDay)}円（牛丼${(perDay/BOWL).toFixed(1)}杯分）\n#ねんきん絶望便 ${window.location.href.split('?')[0]}`;
   $('shX').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(txt);
   $('shL').href='https://line.me/R/share?text='+encodeURIComponent(txt);
   shareTxt=txt;
